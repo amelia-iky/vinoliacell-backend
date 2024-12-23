@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Load Environment
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
@@ -24,14 +24,19 @@ $app->middleware([
     Fruitcake\Cors\HandleCors::class,
 ]);
 $app->register(Fruitcake\Cors\CorsServiceProvider::class);
-$app->configure('cors');
+
+// JWT Auth
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+]);
 
 // Exceptions
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
 );
-
 $app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
@@ -39,12 +44,14 @@ $app->singleton(
 
 // Configuration
 $app->configure('app');
+$app->configure('cors');
+$app->configure('jwt');
 
 // Routes
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
 ], function ($router) {
-    require __DIR__.'/../routes/web.php';
+    require __DIR__ . '/../routes/web.php';
 });
 
 return $app;
