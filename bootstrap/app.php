@@ -19,15 +19,15 @@ $app = new Laravel\Lumen\Application(
 $app->withFacades();
 $app->withEloquent();
 
-// CORS
+// Register Service Providers
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
+
+// Middleware
 $app->middleware([
     Fruitcake\Cors\HandleCors::class,
 ]);
-$app->register(Fruitcake\Cors\CorsServiceProvider::class);
-
-// JWT Auth
-$app->register(App\Providers\AuthServiceProvider::class);
-$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
 ]);
