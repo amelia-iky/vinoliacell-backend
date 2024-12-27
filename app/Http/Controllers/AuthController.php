@@ -34,18 +34,37 @@ class AuthController extends Controller
     }
 
     // Login User
-    public function sigin(Request $request)
+    public function signin(Request $request)
     {
-        $user = $request->only('email', 'password');
+        $credentials = $request->only('email', 'password');
 
         try {
-            if (!$token = JWTAuth::attempt($user)) {
+            if (!$token = JWTAuth::attempt($credentials)) {
                 return response()->json(['message' => 'Invalid email or password'], 401);
             }
+
+            // Mendapatkan user yang sedang login
+            $user = JWTAuth::user();
+
+            // Menambahkan payload khusus ke token
+            $payload = [
+                'id' => $user->id,
+                'userName' => $user->userName,
+                'fullName' => $user->fullName,
+                'address' => $user->address,
+                'telp' => $user->telp,
+                'email' => $user->email,
+                'role' => $user->role,
+            ];
+
+            $token = JWTAuth::claims($payload)->attempt($credentials);
         } catch (JWTException $e) {
             return response()->json(['message' => 'Could not create token'], 500);
         }
 
-        return response()->json(['message' => 'Login successfully', 'User' => $user, 'token' => $token], 200);
+        return response()->json([
+            'message' => 'Login successfully',
+            'token' => $token,
+        ], 200);
     }
 }
