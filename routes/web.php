@@ -11,4 +11,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     // Brands
     $router->get('brands', 'BrandController@getAll');
+
+    // Issues
+    $router->get('issues', 'IssueController@getAll');
 });
