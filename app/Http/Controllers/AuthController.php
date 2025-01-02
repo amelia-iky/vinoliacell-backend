@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Models\Admin;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -37,27 +38,41 @@ class AuthController extends Controller
     public function signin(Request $request)
     {
         $credentials = $request->only('email', 'password');
+        $guard = 'user';
+
+        // Check is admin
+        $isAdmin = Admin::where('email', $request->email)->exists();
+        if ($isAdmin) {
+            $guard = 'admin';
+        }
 
         try {
-            if (!$token = JWTAuth::attempt($credentials)) {
+            // Check credentials
+            if (!auth($guard)->attempt($credentials)) {
                 return response()->json(['message' => 'Invalid email or password'], 401);
             }
 
-            // Mendapatkan user yang sedang login
-            $user = JWTAuth::user();
+            // Get user
+            $user = auth($guard)->user();
 
-            // Menambahkan payload khusus ke token
-            $payload = [
+            // Check role
+            if (!in_array($user->role, ['user', 'admin'])) {
+                return response()->json(['message' => 'Unauthorized role'], 403);
+            }
+
+            // Create payload
+            $customClaims = [
                 'id' => $user->id,
                 'userName' => $user->userName,
                 'fullName' => $user->fullName,
                 'address' => $user->address,
                 'telp' => $user->telp,
                 'email' => $user->email,
-                'role' => $user->role,
+                'role' => $guard === 'user' ? 'user' : 'admin',
             ];
 
-            $token = JWTAuth::claims($payload)->attempt($credentials);
+            // Create token
+            $token = JWTAuth::claims($customClaims)->fromUser($user);
         } catch (JWTException $e) {
             return response()->json(['message' => 'Could not create token'], 500);
         }
