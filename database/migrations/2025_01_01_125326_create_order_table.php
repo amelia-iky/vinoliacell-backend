@@ -15,12 +15,16 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->uuid('user_id');
             $table->string('brand');
-            $table->string('brand_desc');
+            $table->string('model');
             $table->string('issue');
-            $table->string('issue_desc');
-            $table->string('status')->default('pending');
+            $table->string('detail');
+            $table->enum('status', ['Selesai', 'Belum Selesai', 'Tidak Selesai'])->default('Belum Selesai');
             $table->timestamps();
+
+            // Foreign key constraint
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
