@@ -3,28 +3,66 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Order;
 
 class OrderController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function create(Request $request)
     {
-        $order = new Order();
-        $order->brand = $request->brand;
-        $order->brand_desc = $request->brand_desc;
-        $order->issue = $request->issue;
-        $order->issue_desc = $request->issue_desc;
-        $order->status = $request->status;
-        $order->save();
+        // Validate data
+        $validator = Validator::make($request->all(), [
+            'brand' => 'required|string',
+            'model' => 'required|string',
+            'issue' => 'required|string',
+            'detail' => 'required|string',
+        ]);
 
+        // Check validation
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Get current user
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        // Create data
+        $data = new Order();
+        $data->user_id = $user->id;
+        $data->brand = $request->brand;
+        $data->model = $request->model;
+        $data->issue = $request->issue;
+        $data->detail = $request->detail;
+        $data->save();
+
+        // Response
         return response()->json([
+            'success' => true,
             'message' => 'Order created successfully',
-            'data' => $order
+            'data' => $data,
         ], 201);
+    }
+
+
+    public function getAll()
+    {
+        $data = Order::all();
+
+        // Response
+        return response()->json([
+            'message' => 'Orders retrieved successfully',
+            'data' => $data
+        ]);
     }
 }
