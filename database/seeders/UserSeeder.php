@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
             'fullName' => 'Mochammad Syahrul Kurniawan',
             'address' => 'Jl. Raya Sudirman, Singaraja',
             'telp' => '083847847555',
-            'email' => 'syahrul@email.com',
+            'email' => 'user@email.com',
             'password' => Hash::make('user123'),
         ]);
     }
