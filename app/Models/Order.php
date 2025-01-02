@@ -10,7 +10,7 @@ class Order extends Model
     public $incrementing = false; // Disable auto incrementing
     protected $keyType = 'string'; // Set primary key type
     protected $table = 'orders'; // Table name
-    protected $fillable = ['brand', 'brand_desc', 'issue', 'issue_desc', 'status']; // Fillable fields
+    protected $fillable = ['brand', 'model', 'issue', 'detail', 'status']; // Fillable fields
 
     // Set UUID as primary key
     protected static function boot()
@@ -22,5 +22,11 @@ class Order extends Model
                 $model->{$model->getKeyName()} = substr((string) Str::uuid(), 0, 5);
             }
         });
+    }
+
+    // Relationships
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
