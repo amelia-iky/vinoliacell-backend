@@ -9,12 +9,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Str;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
     use Authenticatable, Authorizable, HasFactory;
 
-    protected $table = 'users';
+    public $incrementing = false; // Disable auto incrementing
+    protected $keyType = 'string'; // Set primary key type
+    protected $table = 'users'; // Table name
     protected $fillable = [
         'userName',
         'name',
@@ -23,11 +26,22 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'email',
         'password',
         'role',
-    ];
-
+    ]; // Fillable fields
     protected $hidden = [
         'password',
-    ];
+    ]; // Hide password
+
+    // Set UUID as primary key
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = substr((string) Str::uuid(), 0, 5);
+            }
+        });
+    }
 
     // JWT Auth
     public function getJWTIdentifier()

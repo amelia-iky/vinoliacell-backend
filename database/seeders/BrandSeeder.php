@@ -9,24 +9,21 @@ class BrandSeeder extends Seeder
 {
     public function run()
     {
-        Brand::create([
-            'name' => 'Samsung',
-        ]);
+        $data = [
+            ['name' => 'Apple'],
+            ['name' => 'Asus'],
+            ['name' => 'Google'],
+            ['name' => 'Huawei'],
+            ['name' => 'Nokia'],
+            ['name' => 'Oppo'],
+            ['name' => 'Realme'],
+            ['name' => 'Samsung'],
+            ['name' => 'Vivo'],
+            ['name' => 'Xiaomi'],
+        ];
 
-        Brand::create([
-            'name' => 'Apple',
-        ]);
-
-        Brand::create([
-            'name' => 'Xiaomi',
-        ]);
-
-        Brand::create([
-            'name' => 'Oppo',
-        ]);
-
-        Brand::create([
-            'name' => 'Vivo',
-        ]);
+        foreach ($data as $brand) {
+            Brand::create($brand);
+        }
     }
 }

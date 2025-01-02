@@ -9,36 +9,19 @@ class IssueSeeder extends Seeder
 {
     public function run()
     {
-        Issue::create([
-            'name' => 'Kerusakan Layar',
-        ]);
+        $data = [
+            ['name' => 'Kerusakan Baterai'],
+            ['name' => 'Kerusakan Kamera'],
+            ['name' => 'Kerusakan Layar'],
+            ['name' => 'Kerusakan Software'],
+            ['name' => 'Kerusakan Tombol Fisik'],
+            ['name' => 'Masalah Konektivitas'],
+            ['name' => 'Masalah Pengisian Daya'],
+            ['name' => 'Masalah Suara'],
+        ];
 
-        Issue::create([
-            'name' => 'Kerusakan Baterai',
-        ]);
-
-        Issue::create([
-            'name' => 'Masalah Pengisian Daya',
-        ]);
-
-        Issue::create([
-            'name' => 'Kerusakan Kamera',
-        ]);
-
-        Issue::create([
-            'name' => 'Masalah Suara',
-        ]);
-
-        Issue::create([
-            'name' => 'Masalah Konektivitas',
-        ]);
-
-        Issue::create([
-            'name' => 'Kerusakan Tombol Fisik',
-        ]);
-
-        Issue::create([
-            'name' => 'Kerusakan Software',
-        ]);
+        foreach ($data as $issues) {
+            Issue::create($issues);
+        }
     }
 }
