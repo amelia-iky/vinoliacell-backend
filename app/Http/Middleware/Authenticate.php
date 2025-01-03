@@ -7,28 +7,21 @@ use Illuminate\Contracts\Auth\Factory as Auth;
 
 class Authenticate
 {
-    // Constructor
     protected $auth;
+
+    // Constructor
     public function __construct(Auth $auth)
     {
         $this->auth = $auth;
     }
 
-    // Middleware
+    // Middleware Handle
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+        if ($guard && $this->auth->guard($guard)->guest()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
 
         return $next($request);
     }
-
-    // Middleware Groups
-    protected $middlewareGroups = [
-        'api' => [
-            'throttle:api',
-            \App\Http\Middleware\Authenticate::class,
-        ],
-    ];
 }
