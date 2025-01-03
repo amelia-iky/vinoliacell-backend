@@ -57,7 +57,7 @@ class OrderController extends Controller
 
     public function getAll()
     {
-        $data = Order::all();
+        $data = Order::with('user')->get();
 
         // Response
         return response()->json([
