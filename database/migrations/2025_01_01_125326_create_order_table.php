@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('issue');
             $table->string('detail');
             $table->enum('status', ['Selesai', 'Belum Selesai', 'Tidak Selesai'])->default('Belum Selesai');
+            $table->string('information')->nullable();
             $table->timestamps();
 
             // Foreign key constraint
