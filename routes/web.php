@@ -15,9 +15,19 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     // Issues
     $router->get('issues', 'IssueController@getAll');
 
-    // Protected routes
-    $router->group(['middleware' => 'auth:api'], function () use ($router) {
-        $router->post('orders', 'OrderController@create');
+    // Protected routes for both 'users and admin'
+    $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->get('orders', 'OrderController@getAll');
+    });
+
+    // Protected routes for users
+    $router->group(['middleware' => 'auth:user'], function () use ($router) {
+        // Orders
+        $router->post('orders', 'OrderController@create');
+    });
+
+    // Protected routes for admin
+    $router->group(['middleware' => 'auth:admin'], function () use ($router) {
+        // 
     });
 });
