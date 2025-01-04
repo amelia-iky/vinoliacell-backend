@@ -32,6 +32,7 @@ $router->group(['prefix' => '/api'], function () use ($router) {
     $router->group(['middleware' => 'auth:admin'], function () use ($router) {
         // Orders
         $router->put('orders/{id}', 'OrderController@update');
+        $router->delete('orders/{id}', 'OrderController@delete');
 
         // Users Data
         $router->get('users', 'AdminController@getDataUser');

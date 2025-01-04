@@ -98,6 +98,7 @@ class OrderController extends Controller
         }
     }
 
+    // Get by id
     public function getByID($id)
     {
         // Get current user
@@ -195,6 +196,38 @@ class OrderController extends Controller
         return response()->json([
             'message' => 'Order updated successfully',
             'data' => $order,
+        ]);
+    }
+
+    // Delete by id
+    public function delete($id)
+    {
+        // Get current admin
+        $admin = auth('admin')->user();
+
+        // Check if admin is authenticated
+        if (!$admin) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        // Find the order by ID
+        $order = Order::find($id);
+
+        // Check if order exists
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found',
+            ], 404);
+        }
+
+        // Delete order
+        $order->delete();
+
+        // Response
+        return response()->json([
+            'message' => 'Order deleted successfully',
         ]);
     }
 }
