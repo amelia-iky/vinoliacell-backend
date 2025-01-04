@@ -55,7 +55,6 @@ class OrderController extends Controller
         ], 201);
     }
 
-
     // Get all
     public function getAll()
     {
@@ -99,46 +98,103 @@ class OrderController extends Controller
         }
     }
 
+    public function getByID($id)
+    {
+        // Get current user
+        $user = auth('user')->user();
+        $admin = auth('admin')->user();
+
+        // Check if user or admin
+        if (!$user && !$admin) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        // If auth as admin
+        if ($admin) {
+            $order = Order::with('user')->find($id);
+
+            // Check if order exists
+            if (!$order) {
+                return response()->json([
+                    'message' => 'Order not found',
+                ], 404);
+            }
+
+            // Response
+            return response()->json([
+                'message' => 'Order retrieved successfully',
+                'data' => $order
+            ]);
+        }
+
+        // If auth as user
+        if ($user) {
+            $order = Order::with('user')->where('user_id', $user->id)->find($id);
+
+            // Check if order exists
+            if (!$order) {
+                return response()->json([
+                    'message' => 'Order not found for this user',
+                ], 404);
+            }
+
+            // Response
+            return response()->json([
+                'message' => 'Order retrieved successfully',
+                'data' => $order
+            ]);
+        }
+    }
 
     // Update
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
-        // Validate data
+        // Get current admin
+        $admin = auth('admin')->user();
+
+        // Check if admin is authenticated
+        if (!$admin) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        // Find the order by ID
+        $order = Order::find($id);
+
+        // Check if order exists
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found',
+            ], 404);
+        }
+
+        // Validate the incoming request data
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:Selesai,Belum Selesai,Tidak Selesai',
-            'information' => 'required|string',
+            'status' => 'required|in:Proses Perbaikan,Perbaikan Selesai,Pesanan Ditolak',
+            'information' => 'required|string|max:255',
         ]);
 
-        // Check validation
+        // Check if validation fails
         if ($validator->fails()) {
             return response()->json([
-                'success' => false,
                 'message' => 'Validation failed',
                 'errors' => $validator->errors(),
             ], 422);
         }
 
-        // Get current user
-        $user = auth()->user();
-
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-            ], 401);
-        }
-
-        // Update data
-        $data = Order::find($id);
-        $data->status = $request->status;
-        $data->information = $request->information;
-        $data->save();
+        // Update order with validated data
+        $order->update([
+            'status' => $request->input('status'),
+            'information' => $request->input('information'),
+        ]);
 
         // Response
         return response()->json([
-            'success' => true,
             'message' => 'Order updated successfully',
-            'data' => $data,
+            'data' => $order,
         ]);
     }
 }

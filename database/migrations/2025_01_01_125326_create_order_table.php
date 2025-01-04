@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('model');
             $table->string('issue');
             $table->string('detail');
-            $table->enum('status', ['Selesai', 'Belum Selesai', 'Tidak Selesai'])->default('Belum Selesai');
+            $table->enum('status', ['Pesanan Diterima', 'Proses Perbaikan', 'Perbaikan Selesai', 'Pesanan Ditolak'])->default('Pesanan Diterima');
             $table->string('information')->nullable();
             $table->timestamps();
 
