@@ -17,7 +17,9 @@ $router->group(['prefix' => '/api'], function () use ($router) {
 
     // Protected routes for both 'users and admin'
     $router->group(['middleware' => 'auth'], function () use ($router) {
+        // Orders
         $router->get('orders', 'OrderController@getAll');
+        $router->get('orders/{id}', 'OrderController@getByID');
     });
 
     // Protected routes for users
@@ -28,6 +30,10 @@ $router->group(['prefix' => '/api'], function () use ($router) {
 
     // Protected routes for admin
     $router->group(['middleware' => 'auth:admin'], function () use ($router) {
-        // 
+        // Orders
+        $router->put('orders/{id}', 'OrderController@update');
+
+        // Users Data
+        $router->get('users', 'AdminController@getDataUser');
     });
 });
