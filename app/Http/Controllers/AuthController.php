@@ -37,6 +37,7 @@ class AuthController extends Controller
     // Login User
     public function signin(Request $request)
     {
+        // Get credentials
         $credentials = $request->only('email', 'password');
         $guard = 'user';
 
@@ -77,6 +78,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Could not create token'], 500);
         }
 
+        // Response
         return response()->json([
             'message' => 'Login successfully',
             'token' => $token,
