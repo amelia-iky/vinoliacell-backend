@@ -20,7 +20,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $table = 'users'; // Table name
     protected $fillable = [
         'userName',
-        'name',
+        'fullName',
         'address',
         'telp',
         'email',
